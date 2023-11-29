@@ -1,0 +1,87 @@
+Product Model:
+
+ProductID (Primary Key)
+Name
+Description
+SKU (Stock Keeping Unit)
+Price
+Quantity on Hand
+Location in Warehouse
+Supplier Information
+Order Model:
+
+OrderID (Primary Key)
+CustomerID (Foreign Key referencing User Model)
+Order Date
+Status (e.g., Pending, Shipped, Delivered)
+Total Price
+Shipping Information
+OrderItem Model:
+
+OrderItemID (Primary Key)
+OrderID (Foreign Key referencing Order Model)
+ProductID (Foreign Key referencing Product Model)
+Quantity
+Subtotal Price
+Inventory Model:
+
+InventoryID (Primary Key)
+ProductID (Foreign Key referencing Product Model)
+Quantity
+Last Updated Timestamp
+Alerts for Low Stock
+User Model:
+
+UserID (Primary Key)
+Username
+Password (Hashed)
+Role (e.g., Warehouse Manager, Staff)
+Email
+Contact Information
+Transaction Log Model:
+
+LogID (Primary Key)
+UserID (Foreign Key referencing User Model)
+Action (e.g., Product Added, Order Shipped)
+Timestamp
+Additional Details (e.g., Product details, Order details)
+Supplier Model:
+
+SupplierID (Primary Key)
+Name
+Contact Information
+Products Supplied (potentially a many-to-many relationship with the Product Model)
+Shipment Model:
+
+ShipmentID (Primary Key)
+OrderID (Foreign Key referencing Order Model)
+Carrier Information
+Tracking Number
+Shipment Status
+
+Product Model:
+
+Copy code
+- ProductID (Primary Key)
+- Name
+- Description
+- SKU
+- Price
+- Supplier Information
+...
+Location Model:
+
+Copy code
+- LocationID (Primary Key)
+- Unit
+- Aisle
+- Bay
+- Shelf
+- LocationInShelf
+ProductLocation Model (Many-to-Many Relationship):
+
+Copy code
+- ProductLocationID (Primary Key)
+- ProductID (Foreign Key referencing Product Model)
+- LocationID (Foreign Key referencing Location Model)
+- Quantity
