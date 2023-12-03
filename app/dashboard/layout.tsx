@@ -18,7 +18,7 @@ export default async function DashboardLayout({
 		<>
 			<Navbar />
 			<div className="flex flex-row z-20">
-				<DashboardNavigation className="flex flex-col  h-screen -my-[3.3rem] w-28 px-2" />
+				<DashboardNavigation className="flex flex-col -my-[3.3rem] px-2" />
 				<div className="mb-[64px]">{children}</div>
 			</div>
 		</>
