@@ -1,4 +1,5 @@
-import { UserButton, auth } from '@clerk/nextjs';
+import Navbar from '@/components/navbar';
+import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -14,8 +15,8 @@ export default async function DashboardLayout({
 
 	return (
 		<>
+			<Navbar />
 			{children}
-			<UserButton afterSignOutUrl="/" />
 		</>
 	);
 }
