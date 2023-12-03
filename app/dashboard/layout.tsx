@@ -1,3 +1,4 @@
+import DashboardNavigation from '@/components/dashboardNavigation';
 import Navbar from '@/components/navbar';
 import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
@@ -16,7 +17,10 @@ export default async function DashboardLayout({
 	return (
 		<>
 			<Navbar />
-			{children}
+			<div className="flex flex-row z-20">
+				<DashboardNavigation className="flex flex-col  h-screen -my-[3.3rem] w-28 px-2" />
+				<div className="mb-[64px]">{children}</div>
+			</div>
 		</>
 	);
 }
