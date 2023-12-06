@@ -33,7 +33,7 @@ model Location {
     bay         Int
     shelf       String
     bin         Int
-    quantity    Int    
+    quantity    Int?
     product     Product? @relation(fields: [productId], references: [id])
     productId   String?
     createdAt   DateTime @default(now())

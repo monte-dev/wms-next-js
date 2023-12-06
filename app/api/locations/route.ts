@@ -8,63 +8,45 @@ export async function POST(req: Request) {
 		const { userId } = auth();
 		const body = await req.json();
 
-		const {
-			name,
-			description,
-			SKU,
-			price,
-			supplierId,
-			quantity,
-			location,
-		} = body;
+		const { unit, aisle, bay, shelf, bin } = body;
 		if (!userId)
 			return new NextResponse('Unauthenticated, please log in', {
 				status: 401,
 			});
-		if (
-			!name ||
-			!description ||
-			!SKU ||
-			!price ||
-			!supplierId ||
-			!quantity ||
-			!location
-		) {
+		if (!unit || !aisle || !bay || !shelf || !bin) {
 			return new NextResponse(
-				'All required fields need to be filled in.',
+				'All location fields need to be filled in.',
 				{ status: 400 }
 			);
 		}
 
-		const newProduct = await prismadb.product.create({
+		const newLocation = await prismadb.location.create({
 			data: {
-				name,
-				description,
-				SKU,
-				price,
-				supplierId,
-				quantity,
-				location,
+				unit,
+				aisle,
+				bay,
+				shelf,
+				bin,
 			},
 		});
-		return NextResponse.json(newProduct);
+		return NextResponse.json(newLocation);
 	} catch (error) {
-		console.log('[PRODUCT_POST_REQUEST]', error);
+		console.log('[LOCATIONS_POST_REQUEST]', error);
 		return new NextResponse('Internal Server Error', { status: 500 });
 	}
 }
 
 export async function GET(req: Request) {
 	try {
-		const products = await prismadb.product.findMany({
+		const locations = await prismadb.location.findMany({
 			include: {
-				location: true,
+				product: true,
 			},
 		});
 
-		return NextResponse.json(products);
+		return NextResponse.json(locations);
 	} catch (error) {
-		console.log('[PRODUCT_GET_REQUEST]', error);
+		console.log('[LOCATIONS_GET_REQUEST]', error);
 		return new NextResponse('Internal Server Error', { status: 500 });
 	}
 }
