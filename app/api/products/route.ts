@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from '@/lib/enums/statusCodes';
 import prismadb from '@/lib/prismadb';
 import { auth } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
 		} = body;
 		if (!userId)
 			return new NextResponse('Unauthenticated, please log in', {
-				status: 401,
+				status: HTTP_STATUS.UNAUTHENTICATED,
 			});
 		if (
 			!name ||
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
 		) {
 			return new NextResponse(
 				'All required fields need to be filled in.',
-				{ status: 400 }
+				{ status: HTTP_STATUS.BAD_REQUEST }
 			);
 		}
 
@@ -50,7 +51,9 @@ export async function POST(req: Request) {
 		return NextResponse.json(newProduct);
 	} catch (error) {
 		console.log('[PRODUCT_POST_REQUEST]', error);
-		return new NextResponse('Internal Server Error', { status: 500 });
+		return new NextResponse('Internal Server Error', {
+			status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		});
 	}
 }
 
@@ -65,6 +68,8 @@ export async function GET(req: Request) {
 		return NextResponse.json(products);
 	} catch (error) {
 		console.log('[PRODUCT_GET_REQUEST]', error);
-		return new NextResponse('Internal Server Error', { status: 500 });
+		return new NextResponse('Internal Server Error', {
+			status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		});
 	}
 }

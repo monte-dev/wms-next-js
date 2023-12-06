@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from '@/lib/enums/statusCodes';
 import prismadb from '@/lib/prismadb';
 import { auth } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
@@ -11,12 +12,12 @@ export async function POST(req: Request) {
 		const { unit, aisle, bay, shelf, bin } = body;
 		if (!userId)
 			return new NextResponse('Unauthenticated, please log in', {
-				status: 401,
+				status: HTTP_STATUS.UNAUTHENTICATED,
 			});
 		if (!unit || !aisle || !bay || !shelf || !bin) {
 			return new NextResponse(
 				'All location fields need to be filled in.',
-				{ status: 400 }
+				{ status: HTTP_STATUS.BAD_REQUEST }
 			);
 		}
 
@@ -32,7 +33,9 @@ export async function POST(req: Request) {
 		return NextResponse.json(newLocation);
 	} catch (error) {
 		console.log('[LOCATIONS_POST_REQUEST]', error);
-		return new NextResponse('Internal Server Error', { status: 500 });
+		return new NextResponse('Internal Server Error', {
+			status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		});
 	}
 }
 
@@ -47,6 +50,8 @@ export async function GET(req: Request) {
 		return NextResponse.json(locations);
 	} catch (error) {
 		console.log('[LOCATIONS_GET_REQUEST]', error);
-		return new NextResponse('Internal Server Error', { status: 500 });
+		return new NextResponse('Internal Server Error', {
+			status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		});
 	}
 }
