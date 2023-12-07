@@ -13,12 +13,12 @@ model Product {
     id          String   @id @default(uuid())
     name        String
     description String
-    SKU         String   @unique
+    SKU         String
     price       Float
     quantity    Int
     supplier    Supplier @relation(fields: [supplierId], references: [id])
     supplierId  String
-    location    Location[]
+    locations    Location[]
     orders      OrderItem[]
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt

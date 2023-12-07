@@ -9,15 +9,7 @@ export async function POST(req: Request) {
 		const { userId } = auth();
 		const body = await req.json();
 
-		const {
-			name,
-			description,
-			SKU,
-			price,
-			supplierId,
-			quantity,
-			location,
-		} = body;
+		const { name, description, SKU, price, supplierId, quantity } = body;
 		if (!userId)
 			return new NextResponse('Unauthenticated, please log in', {
 				status: HTTP_STATUS.UNAUTHENTICATED,
@@ -28,14 +20,14 @@ export async function POST(req: Request) {
 			!SKU ||
 			!price ||
 			!supplierId ||
-			!quantity ||
-			!location
+			!quantity
 		) {
 			return new NextResponse(
 				'All required fields need to be filled in.',
 				{ status: HTTP_STATUS.BAD_REQUEST }
 			);
 		}
+		console.log('[PRODUCT_POST_REQUEST] Payload:', body);
 
 		const newProduct = await prismadb.product.create({
 			data: {
@@ -45,9 +37,9 @@ export async function POST(req: Request) {
 				price,
 				supplierId,
 				quantity,
-				location,
 			},
 		});
+
 		return NextResponse.json(newProduct);
 	} catch (error) {
 		console.log('[PRODUCT_POST_REQUEST]', error);
@@ -61,7 +53,8 @@ export async function GET(req: Request) {
 	try {
 		const products = await prismadb.product.findMany({
 			include: {
-				location: true,
+				locations: true,
+				orders: true,
 			},
 		});
 
