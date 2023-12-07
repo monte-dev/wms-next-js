@@ -3,6 +3,40 @@ import prismadb from '@/lib/prismadb';
 import { auth } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
 
+export async function GET(
+	req: Request,
+	{ params }: { params: { locationId: string } }
+) {
+	try {
+		const { userId } = auth();
+
+		if (!userId) {
+			return new NextResponse('Unauthenticated', {
+				status: HTTP_STATUS.UNAUTHENTICATED,
+			});
+		}
+
+		if (!params.locationId) {
+			return new NextResponse('Location id is required', {
+				status: HTTP_STATUS.BAD_REQUEST,
+			});
+		}
+
+		const location = await prismadb.location.findUnique({
+			where: { id: params.locationId },
+			include: {
+				product: true,
+			},
+		});
+
+		return NextResponse.json(location);
+	} catch (error) {
+		console.log('LOCATION_GET_REQUEST', error);
+		return new NextResponse('Internal error', {
+			status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		});
+	}
+}
 export async function PATCH(
 	req: Request,
 	{ params }: { params: { locationId: string } }
@@ -68,7 +102,7 @@ export async function DELETE(
 			});
 		}
 
-		const location = await prismadb.location.deleteMany({
+		const location = await prismadb.location.delete({
 			where: {
 				id: params.locationId,
 			},
