@@ -16,8 +16,8 @@ model Product {
     SKU         String
     price       Float
     quantity    Int
-    supplier    Supplier @relation(fields: [supplierId], references: [id])
-    supplierId  String
+    supplier    Supplier? @relation(fields: [supplierId], references: [id])
+    supplierId  String?
     locations    Location[]
     orders      OrderItem[]
     createdAt   DateTime @default(now())

@@ -27,7 +27,6 @@ export async function POST(req: Request) {
 				{ status: HTTP_STATUS.BAD_REQUEST }
 			);
 		}
-		console.log('[PRODUCT_POST_REQUEST] Payload:', body);
 
 		const newProduct = await prismadb.product.create({
 			data: {
