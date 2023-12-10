@@ -1,6 +1,8 @@
 import SectionHeading from '@/components/sectionHeading';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import prismadb from '@/lib/prismadb';
+import ProductList from './components/productList';
 
 const ProductsPage = async () => {
 	const products = await prismadb.product.findMany({
@@ -10,15 +12,20 @@ const ProductsPage = async () => {
 		},
 	});
 	return (
-		<div className="w-full">
-			<div className="mx-4">
-				<SectionHeading
-					title="Products"
-					description="Manage your inventory"
-				/>
+		<div className="w-full h-full">
+			<div className="mx-4 flex justify-between">
+				<div>
+					<SectionHeading
+						title="Products"
+						description="Manage your inventory"
+					/>
+				</div>
+				<Button>Add product</Button>
 			</div>
 			<Separator />
-			<div></div>
+			<div>
+				<ProductList data={products}></ProductList>
+			</div>
 		</div>
 	);
 };
