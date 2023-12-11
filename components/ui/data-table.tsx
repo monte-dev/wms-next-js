@@ -32,33 +32,38 @@ export function DataTable<TData, TValue>({
 	});
 
 	return (
-		<div className="flex items-center py-4 rounded-md border">
+		<div className="flex items-center rounded-md border">
 			<Table>
-				<TableHeader>
+				<TableHeader className="border-2 border-b-slate-500">
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-								return (
-									<TableHead key={header.id}>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef
-														.header,
-													header.getContext()
-											  )}
-									</TableHead>
-								);
-							})}
+							{headerGroup.headers.map((header) => (
+								<TableHead
+									key={header.id}
+									className="bg-gray-200 text-center font-bold"
+								>
+									{header.isPlaceholder
+										? null
+										: flexRender(
+												header.column.columnDef.header,
+												header.getContext()
+										  )}
+								</TableHead>
+							))}
 						</TableRow>
 					))}
 				</TableHeader>
-				<TableBody>
+				<TableBody className="text-center">
 					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
+						table.getRowModel().rows.map((row, index) => (
 							<TableRow
 								key={row.id}
 								data-state={row.getIsSelected() && 'selected'}
+								className={
+									index % 2 === 1
+										? 'bg-gray-200 hover:bg-slate-500'
+										: 'hover:bg-slate-500'
+								}
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>

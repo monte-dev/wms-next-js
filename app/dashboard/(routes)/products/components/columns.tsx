@@ -26,13 +26,6 @@ export type ProductColumns = {
 };
 export const products: ColumnDef<ProductColumns>[] = [
 	{
-		accessorKey: 'rowPosition',
-		header: 'Row Position',
-		cell: ({ row }) => {
-			return <div className="">{row.index + 1}</div>; // Display index + 1 to start from 1
-		},
-	},
-	{
 		accessorKey: 'SKU',
 		header: 'SKU',
 	},

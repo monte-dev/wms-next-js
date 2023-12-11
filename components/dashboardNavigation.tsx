@@ -64,8 +64,8 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
 			className={cn(
 				`bg-slate-700 ${
 					showNavLinks
-						? 'h-screen  w-28 transition-all'
-						: 'h-[52px] w-16 absolute transition-all'
+						? 'h-screen  w-28 transition-all '
+						: 'h-[52px] w-16 absolute transition-all '
 				}`,
 				className
 			)}
@@ -87,8 +87,8 @@ const DashboardNavigation: React.FC<DashboardNavigationProps> = ({
 							aria-current={link.active ? 'page' : undefined}
 							aria-label={link.name}
 							className={cn(
-								'flex flex-row items-center justify-start my-1 font-semibold hover:bg-gray-200 rounded-md px-1 py-3',
-								link.active ? 'bg-gray-200' : ''
+								'flex flex-row items-center justify-start my-1 font-semibold hover:bg-gray-200 rounded-md px-1 py-3 text-gray-300 hover:text-black',
+								link.active ? 'bg-gray-200 text-black' : ''
 							)}
 						>
 							<span>{link.icon}</span>
