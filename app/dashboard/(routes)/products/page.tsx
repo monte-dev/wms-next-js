@@ -8,6 +8,7 @@ const ProductsPage = async () => {
 			supplier: true,
 		},
 	});
+
 	return (
 		<div className="w-full h-full">
 			<ProductList data={products}></ProductList>
