@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -27,30 +26,45 @@ import {
 	SelectContent,
 	SelectTrigger,
 	SelectValue,
+	SelectItem,
 } from '@/components/ui/select';
-import { SelectItem } from '@radix-ui/react-select';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
 	name: z
 		.string()
 		.min(2, { message: 'Product name must be at least 2 characters long.' })
 		.max(25),
-	description: z.string().min(2).max(75),
-	SKU: z.string().min(2).max(10),
-	price: z.coerce.number().min(1),
-	supplier: z.string().min(1),
-	quantity: z.coerce.number().min(2).max(1000),
+	description: z
+		.string()
+		.min(2, {
+			message: 'Product description must be at least 2 characters long.',
+		})
+		.max(75),
+	SKU: z
+		.string()
+		.min(2, { message: 'Product SKU must be 2-10 characters long.' })
+		.max(10),
+	price: z.coerce
+		.number()
+		.min(1, { message: 'Price must be a numeric value greater than 0.' }),
+	supplierId: z.string().min(1, { message: 'Select supplier from list.' }),
+	quantity: z.coerce
+		.number()
+		.min(1, { message: 'Quantity must be a numeric value greater than 0.' })
+		.max(1000),
 });
 interface ProductFormProps {
 	suppliers: Supplier[];
 }
 const ProductForm: React.FC<ProductFormProps> = ({ suppliers }) => {
+	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: '',
 			description: '',
-			supplier: '',
+			supplierId: '',
 			SKU: '',
 			price: 0,
 			quantity: 0,
@@ -60,6 +74,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ suppliers }) => {
 		try {
 			console.log('form submitted', data);
 			await axios.post(`/api/products`, data);
+			router.push('/dashboard/products');
 		} catch (error) {
 			console.log('Something went wrong.', error);
 		}
@@ -129,7 +144,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ suppliers }) => {
 					></FormField>
 					<div className="grid grid-cols-3 gap-8 py-4">
 						<FormField
-							name="supplier"
+							name="supplierId"
 							control={form.control}
 							render={({ field }) => (
 								<FormItem>
