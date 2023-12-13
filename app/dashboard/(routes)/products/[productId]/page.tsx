@@ -1,7 +1,8 @@
 import prismadb from '@/lib/prismadb';
 import ProductForm from './components/productForm';
+import { useParams } from 'next/navigation';
 
-const ProductPage = async () => {
+const ProductPage = async ({ params }: { params: {} }) => {
 	const suppliers = await prismadb.supplier.findMany({
 		include: { productsSupplied: true },
 	});

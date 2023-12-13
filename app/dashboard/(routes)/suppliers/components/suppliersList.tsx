@@ -16,7 +16,7 @@ const SuppliersList: React.FC<Suppliers> = ({ data }) => {
 	const router = useRouter();
 	return (
 		<div>
-			<div className="mx-4 flex justify-between">
+			<div className="mx-4 my-1 flex justify-between items-center">
 				<div>
 					<SectionHeading
 						title="Suppliers"

@@ -50,8 +50,12 @@ export const products: ColumnDef<ProductColumns>[] = [
 		header: 'Price',
 	},
 	{
-		accessorKey: 'supplier.name',
+		accessorKey: 'supplier',
 		header: 'Supplier',
+		cell: ({ row }) => {
+			const supplierName = row.original.supplier?.name;
+			return <p>{supplierName}</p>;
+		},
 	},
 
 	{
