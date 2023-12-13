@@ -17,9 +17,11 @@ const ProductList: React.FC<Products> = ({ data }) => {
 	const router = useRouter();
 	const [selectedProduct, setSelectedProduct] =
 		useState<ProductColumns | null>(null);
+
 	const handleRowClick = (product: ProductColumns) => {
 		setSelectedProduct(product);
 	};
+
 	const title = selectedProduct ? 'Edit Product' : 'Add product';
 	const route = selectedProduct
 		? `products/${selectedProduct.id}`
@@ -36,7 +38,7 @@ const ProductList: React.FC<Products> = ({ data }) => {
 				</div>
 				<Button onClick={() => router.push(route)}>
 					<span className="me-1">
-						{selectedProduct ? <PiPlusCircleBold /> : <PiPenBold />}
+						{selectedProduct ? <PiPenBold /> : <PiPlusCircleBold />}
 					</span>
 					{title}
 				</Button>
@@ -47,6 +49,7 @@ const ProductList: React.FC<Products> = ({ data }) => {
 					data={data}
 					columns={products}
 					onRowClick={handleRowClick}
+					selectedProduct={selectedProduct}
 				></DataTable>
 			</div>
 		</div>

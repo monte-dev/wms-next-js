@@ -1,12 +1,10 @@
-'use client';
-
 import {
 	ColumnDef,
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table';
-
+import { cn } from '@/lib/utils';
 import {
 	Table,
 	TableBody,
@@ -20,12 +18,14 @@ interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	onRowClick?: (row: TData) => void;
+	selectedProduct: TData | null;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
 	onRowClick,
+	selectedProduct,
 }: DataTableProps<TData, TValue>) {
 	const table = useReactTable({
 		data,
@@ -57,29 +57,35 @@ export function DataTable<TData, TValue>({
 				</TableHeader>
 				<TableBody className="text-center">
 					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row, index) => (
-							<TableRow
-								key={row.id}
-								data-state={row.getIsSelected() && 'selected'}
-								onClick={() =>
-									onRowClick && onRowClick(row.original)
-								}
-								className={
-									index % 2 === 1
-										? 'bg-gray-200 hover:bg-slate-500'
-										: 'hover:bg-slate-500'
-								}
-							>
-								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
-										{flexRender(
-											cell.column.columnDef.cell,
-											cell.getContext()
-										)}
-									</TableCell>
-								))}
-							</TableRow>
-						))
+						table.getRowModel().rows.map((row, index) => {
+							const isSelected = row.original === selectedProduct;
+
+							return (
+								<TableRow
+									key={row.id}
+									data-state={
+										row.getIsSelected() ? 'selected' : ''
+									}
+									onClick={() =>
+										onRowClick && onRowClick(row.original)
+									}
+									className={cn(
+										index % 2 === 1 && 'bg-gray-200',
+										isSelected && 'bg-black text-white',
+										'hover:bg-slate-500 hover:text-white'
+									)}
+								>
+									{row.getVisibleCells().map((cell) => (
+										<TableCell key={cell.id}>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									))}
+								</TableRow>
+							);
+						})
 					) : (
 						<TableRow>
 							<TableCell
