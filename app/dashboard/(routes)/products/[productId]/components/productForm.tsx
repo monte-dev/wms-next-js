@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 import SectionHeading from '@/components/sectionHeading';
-import { Supplier } from '@prisma/client';
+import { Product, Supplier } from '@prisma/client';
 import {
 	Select,
 	SelectContent,
@@ -28,7 +28,8 @@ import {
 	SelectValue,
 	SelectItem,
 } from '@/components/ui/select';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import prismadb from '@/lib/prismadb';
 
 const formSchema = z.object({
 	name: z
@@ -56,9 +57,20 @@ const formSchema = z.object({
 });
 interface ProductFormProps {
 	suppliers: Supplier[];
+	initialData: Product[];
 }
-const ProductForm: React.FC<ProductFormProps> = ({ suppliers }) => {
+const ProductForm: React.FC<ProductFormProps> = ({
+	suppliers,
+	initialData,
+}) => {
 	const router = useRouter();
+	console.log(initialData);
+
+	const totalQuantity = initialData.reduce(
+		(total, item) => total + item.quantity,
+		0
+	);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -66,15 +78,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ suppliers }) => {
 			description: '',
 			supplierId: '',
 			SKU: '',
-			price: 0,
-			quantity: 0,
+			price: initialData.length > 0 ? initialData[0].price : 0,
+			quantity: totalQuantity || 0,
 		},
 	});
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		try {
 			console.log('form submitted', data);
-			await axios.post(`/api/products`, data);
-			router.push('/dashboard/products');
+			if (initialData && initialData.length > 0) {
+				// await axios.patch(`/api/products`)
+			} else {
+				await axios.post(`/api/products`, data);
+				router.push('/dashboard/products');
+			}
 		} catch (error) {
 			console.log('Something went wrong.', error);
 		}
@@ -194,9 +210,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ suppliers }) => {
 						<FormField
 							name="quantity"
 							control={form.control}
+							disabled
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Quantity</FormLabel>
+									<FormLabel>Total Quantity</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="amount..."
