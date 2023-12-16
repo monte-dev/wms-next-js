@@ -26,9 +26,9 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-
-import SectionHeading from '@/components/sectionHeading';
+import { ProductColumns } from './columns';
+import SkuList from './skuList';
+import { Separator } from '@radix-ui/react-separator';
 
 const formSchema = z.object({
 	name: z
@@ -56,34 +56,52 @@ const formSchema = z.object({
 });
 interface ProductFormProps {
 	suppliers: Supplier[];
-	initialData: Product[];
+	initialData: Product | null;
+	productsBySKU: ProductColumns[];
 }
 const ProductForm: React.FC<ProductFormProps> = ({
 	suppliers,
 	initialData,
+	productsBySKU,
 }) => {
 	const router = useRouter();
 
-	const totalQuantity = initialData.reduce(
-		(total, item) => total + item.quantity,
-		0
-	);
+	let totalQuantity;
+	if (productsBySKU[0].id === initialData?.id && productsBySKU.length > 1) {
+		totalQuantity = productsBySKU.reduce(
+			(total, item) => total + item.quantity,
+			0
+		);
+	}
+	const defaultValues = {
+		name: '',
+		description: '',
+		SKU: '',
+		price: 0,
+		supplierId: '',
+		quantity: totalQuantity ? totalQuantity : 0,
+	};
+
+	if (initialData) {
+		defaultValues.name = initialData.name || '';
+		defaultValues.description = initialData.description || '';
+		defaultValues.SKU = initialData.SKU || '';
+		defaultValues.price = initialData.price || 0;
+		defaultValues.supplierId = initialData.supplierId || '';
+		defaultValues.quantity = totalQuantity
+			? totalQuantity
+			: initialData.quantity || 0;
+	}
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {
-			name: '',
-			description: '',
-			supplierId: '',
-			SKU: '',
-			price: initialData.length > 0 ? initialData[0].price : 0,
-			quantity: totalQuantity || 0,
-		},
+		defaultValues,
 	});
+
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		try {
 			console.log('form submitted', data);
-			if (initialData && initialData.length > 0) {
+			if (initialData) {
 				// await axios.patch(`/api/products`)
 			} else {
 				await axios.post(`/api/products`, data);
@@ -203,7 +221,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
 						<FormField
 							name="quantity"
 							control={form.control}
-							disabled
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Total Quantity</FormLabel>
@@ -211,6 +228,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 										<Input
 											placeholder="amount..."
 											{...field}
+											disabled={!!initialData}
 										/>
 									</FormControl>
 									<FormMessage />
@@ -219,10 +237,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
 						></FormField>
 					</div>
 					<Button type="submit" className="ml-auto">
-						Add product
+						{initialData ? 'Edit product' : 'Add product'}
 					</Button>
 				</form>
 			</Form>
+			<Separator />
+			<SkuList initialData={productsBySKU} />
 		</>
 	);
 };

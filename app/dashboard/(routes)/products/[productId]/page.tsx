@@ -13,6 +13,10 @@ const ProductPage = async ({ params }: { params: { productId: string } }) => {
 		where: {
 			id: params.productId,
 		},
+		include: {
+			supplier: true,
+			locations: true,
+		},
 	});
 	const productBySKU = await prismadb.product.findMany({
 		where: {
@@ -32,10 +36,9 @@ const ProductPage = async ({ params }: { params: { productId: string } }) => {
 			<Separator />
 			<ProductForm
 				suppliers={suppliers}
-				initialData={productBySKU}
+				initialData={product}
+				productsBySKU={productBySKU}
 			></ProductForm>
-			<Separator />
-			<SkuList initialData={productBySKU} />
 		</div>
 	);
 };
