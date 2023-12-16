@@ -112,6 +112,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
 		}
 	};
 
+	const onDeleteClick = async () => {
+		try {
+			await axios.delete(`/api/products/${initialData?.id}`);
+			console.log('product deleted', initialData?.id);
+			router.push('/dashboard/products');
+		} catch (error) {
+			console.log('Something went wrong.', error);
+		}
+	};
+
 	return (
 		<>
 			<Form {...form}>
@@ -236,9 +246,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
 							)}
 						></FormField>
 					</div>
-					<Button type="submit" className="ml-auto">
-						{initialData ? 'Edit product' : 'Add product'}
-					</Button>
+					<div className="flex justify-between items-center">
+						<Button type="submit">
+							{initialData ? 'Edit product' : 'Add product'}
+						</Button>
+						{initialData && (
+							<Button
+								type="button"
+								variant="destructive"
+								onClick={onDeleteClick}
+							>
+								Delete
+							</Button>
+						)}
+					</div>
 				</form>
 			</Form>
 			<Separator />

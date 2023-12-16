@@ -44,7 +44,7 @@ export async function GET(
 
 export async function DELETE(
 	_req: Request,
-	{ params }: { params: { productId: string } }
+	{ params }: { params: { id: string } }
 ) {
 	try {
 		const { userId } = auth();
@@ -55,7 +55,7 @@ export async function DELETE(
 			});
 		}
 
-		if (!params.productId) {
+		if (!params.id) {
 			return new NextResponse('Product id is required', {
 				status: HTTP_STATUS.BAD_REQUEST,
 			});
@@ -63,7 +63,7 @@ export async function DELETE(
 
 		const product = await prismadb.product.delete({
 			where: {
-				id: params.productId,
+				id: params.id,
 			},
 		});
 

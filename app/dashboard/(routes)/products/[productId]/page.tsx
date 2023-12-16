@@ -27,6 +27,7 @@ const ProductPage = async ({ params }: { params: { productId: string } }) => {
 			locations: true,
 		},
 	});
+
 	return (
 		<div className="lg:px-12">
 			<SectionHeading
