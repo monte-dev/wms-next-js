@@ -5,6 +5,9 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { Product, Supplier } from '@prisma/client';
+import { useRouter } from 'next/navigation';
+
 import {
 	Form,
 	FormControl,
@@ -13,14 +16,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-
-import SectionHeading from '@/components/sectionHeading';
-import { Product, Supplier } from '@prisma/client';
 import {
 	Select,
 	SelectContent,
@@ -28,8 +23,12 @@ import {
 	SelectValue,
 	SelectItem,
 } from '@/components/ui/select';
-import { useParams, useRouter } from 'next/navigation';
-import prismadb from '@/lib/prismadb';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+
+import SectionHeading from '@/components/sectionHeading';
 
 const formSchema = z.object({
 	name: z
@@ -64,7 +63,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
 	initialData,
 }) => {
 	const router = useRouter();
-	console.log(initialData);
 
 	const totalQuantity = initialData.reduce(
 		(total, item) => total + item.quantity,
@@ -98,11 +96,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
 	return (
 		<>
-			<SectionHeading
-				title="Add/Edit Product"
-				description="Add new or modify existing product"
-			/>
-			<Separator />
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}

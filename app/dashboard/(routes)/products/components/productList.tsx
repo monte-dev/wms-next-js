@@ -15,6 +15,9 @@ interface Products {
 
 const ProductList: React.FC<Products> = ({ data }) => {
 	const router = useRouter();
+
+	//todo fix table to combine products by SKU
+
 	const [selectedProduct, setSelectedProduct] =
 		useState<ProductColumns | null>(null);
 
