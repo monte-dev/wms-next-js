@@ -65,14 +65,32 @@ const ProductForm: React.FC<ProductFormProps> = ({
 	productsBySKU,
 }) => {
 	const router = useRouter();
+	const { formState } = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			name: initialData?.name || '',
+			description: initialData?.description || '',
+			SKU: initialData?.SKU || '',
+			price: initialData?.price || 0,
+			supplierId: initialData?.supplierId || '',
+			quantity: initialData?.quantity || 0,
+		},
+	});
+
+	const { touchedFields } = formState;
 
 	let totalQuantity;
-	if (productsBySKU[0].id === initialData?.id && productsBySKU.length > 1) {
+	if (
+		touchedFields.quantity &&
+		productsBySKU[0].id === initialData?.id &&
+		productsBySKU.length > 1
+	) {
 		totalQuantity = productsBySKU.reduce(
 			(total, item) => total + item.quantity,
 			0
 		);
 	}
+
 	const defaultValues = {
 		name: '',
 		description: '',
@@ -100,13 +118,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		try {
-			console.log('form submitted', data);
 			if (initialData) {
-				// await axios.patch(`/api/products`)
+				console.log('PRODUCT-PATCH', data);
+				console.log(initialData.id);
+				await axios.patch(`/api/products/${initialData.id}`, data);
 			} else {
+				console.log('[PRODUCT-POST]', data);
 				await axios.post(`/api/products`, data);
-				router.push('/dashboard/products');
 			}
+			router.refresh();
+			router.push('/dashboard/products');
 		} catch (error) {
 			console.log('Something went wrong.', error);
 		}

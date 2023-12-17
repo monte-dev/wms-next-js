@@ -75,3 +75,71 @@ export async function DELETE(
 		});
 	}
 }
+
+export async function PATCH(
+	req: Request,
+	{ params }: { params: { id: string } }
+) {
+	await prismadb.$connect();
+	try {
+		const { userId } = auth();
+		const body = await req.json();
+
+		if (!userId) {
+			return new NextResponse('Unauthenticated, please log in', {
+				status: HTTP_STATUS.UNAUTHENTICATED,
+			});
+		}
+
+		const { name, description, SKU, price, supplierId, quantity } = body;
+
+		if (
+			!name &&
+			!description &&
+			!SKU &&
+			!price &&
+			supplierId === undefined &&
+			quantity === undefined
+		) {
+			return new NextResponse('No data to update', {
+				status: HTTP_STATUS.BAD_REQUEST,
+			});
+		}
+
+		// update specified product's quantity
+		const updatedIndividualQuantity = await prismadb.product.update({
+			where: {
+				id: params.id,
+			},
+			data: {
+				quantity,
+			},
+		});
+		const relatedBySKU = await prismadb.product.findMany({
+			where: {
+				SKU: updatedIndividualQuantity.SKU,
+			},
+		});
+		await Promise.all(
+			relatedBySKU.map(async (relatedProduct) => {
+				await prismadb.product.update({
+					where: { id: relatedProduct.id },
+					data: {
+						name,
+						description,
+						SKU,
+						supplierId,
+						price,
+					},
+				});
+			})
+		);
+
+		return NextResponse.json({ message: 'Product updated successfully' });
+	} catch (error) {
+		console.error('PRODUCT_PATCH_REQUEST', error);
+		return new NextResponse('Internal error', {
+			status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		});
+	}
+}
