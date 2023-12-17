@@ -26,9 +26,10 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+
 import { ProductColumns } from './columns';
 import SkuList from './skuList';
-import { Separator } from '@radix-ui/react-separator';
 
 const formSchema = z.object({
 	name: z
@@ -116,14 +117,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
 		defaultValues,
 	});
 
+	// form actions
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		try {
 			if (initialData) {
-				console.log('PRODUCT-PATCH', data);
-				console.log(initialData.id);
 				await axios.patch(`/api/products/${initialData.id}`, data);
 			} else {
-				console.log('[PRODUCT-POST]', data);
 				await axios.post(`/api/products`, data);
 			}
 			router.refresh();
@@ -136,7 +135,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
 	const onDeleteClick = async () => {
 		try {
 			await axios.delete(`/api/products/${initialData?.id}`);
-			console.log('product deleted', initialData?.id);
 			router.push('/dashboard/products');
 		} catch (error) {
 			console.log('Something went wrong.', error);

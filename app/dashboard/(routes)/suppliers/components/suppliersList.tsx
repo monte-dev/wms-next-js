@@ -1,19 +1,34 @@
 'use client';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { suppliers, SuppliersColumns } from './columns';
 
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import SectionHeading from '@/components/sectionHeading';
-import React from 'react';
-import { PiPlusCircleBold } from 'react-icons/pi';
+
+import { suppliers, SuppliersColumns } from './columns';
+
+import { PiPenBold, PiPlusCircleBold } from 'react-icons/pi';
+
 interface Suppliers {
 	data: SuppliersColumns[];
 }
 const SuppliersList: React.FC<Suppliers> = ({ data }) => {
 	const router = useRouter();
+
+	const [selectedSupplier, setSelectedSupplier] =
+		useState<SuppliersColumns | null>(null);
+
+	const handleRowClick = (supplier: SuppliersColumns) => {
+		setSelectedSupplier(supplier);
+	};
+	const buttonText = selectedSupplier ? 'Edit supplier' : 'Add supplier';
+
+	const route = selectedSupplier
+		? `suppliers/${selectedSupplier.id}`
+		: 'suppliers/new';
+
 	return (
 		<div>
 			<div className="mx-4 my-1 flex justify-between items-center">
@@ -23,16 +38,25 @@ const SuppliersList: React.FC<Suppliers> = ({ data }) => {
 						description="Manage your suppliers"
 					/>
 				</div>
-				<Button onClick={() => router.push(`/dashboard/suppliers/new`)}>
+				<Button onClick={() => router.push(route)}>
 					<span className="me-1">
-						<PiPlusCircleBold />
+						{selectedSupplier ? (
+							<PiPenBold />
+						) : (
+							<PiPlusCircleBold />
+						)}
 					</span>
-					Add supplier
+					{buttonText}
 				</Button>
 			</div>
 			<Separator />
 			<div className="m-2 border-2 min-h-full rounded-lg p-2 border-gray-200  bg-slate-100 ">
-				<DataTable data={data} columns={suppliers}></DataTable>
+				<DataTable
+					data={data}
+					columns={suppliers}
+					onRowClick={handleRowClick}
+					selectedProduct={selectedSupplier}
+				></DataTable>
 			</div>
 		</div>
 	);

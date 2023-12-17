@@ -4,22 +4,24 @@ import * as z from 'zod';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Product, Supplier } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 
 import {
-	Form,
 	FormControl,
-	FormField,
+	Form,
 	FormItem,
+	FormField,
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-
 import SectionHeading from '@/components/sectionHeading';
+import ProductList from './productsList';
+import { ProductColumns } from './columns';
 
 const formSchema = z.object({
 	name: z
@@ -33,19 +35,43 @@ const formSchema = z.object({
 		})
 		.max(125),
 });
-
-const SupplierForm = () => {
+interface SupplierFormProps {
+	initialData: Supplier | null;
+	productsSupplied: ProductColumns[];
+}
+const SupplierForm: React.FC<SupplierFormProps> = ({
+	initialData,
+	productsSupplied,
+}) => {
+	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: '',
-			contactInformation: '',
+			name: initialData?.name || '',
+			contactInformation: initialData?.contactInformation || '',
 		},
 	});
+
+	// form actions
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		try {
-			console.log('form submitted', data);
-			await axios.post(`/api/suppliers`, data);
+			if (initialData) {
+				await axios.patch(`/api/suppliers/${initialData.id}`, data);
+			} else {
+				await axios.post(`/api/suppliers`, data);
+			}
+			router.push('/dashboard/suppliers');
+			router.refresh();
+		} catch (error) {
+			console.log('Something went wrong.', error);
+		}
+	};
+
+	const onDeleteClick = async () => {
+		try {
+			await axios.delete(`/api/suppliers/${initialData?.id}`);
+			router.refresh();
+			router.push('/dashboard/suppliers');
 		} catch (error) {
 			console.log('Something went wrong.', error);
 		}
@@ -58,6 +84,7 @@ const SupplierForm = () => {
 				description="Add new or modify supplier details"
 			/>
 			<Separator />
+
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
@@ -95,11 +122,24 @@ const SupplierForm = () => {
 						)}
 					></FormField>
 
-					<Button type="submit" className="ml-auto mt-3">
-						Add supplier
-					</Button>
+					<div className="flex justify-between items-center mt-3">
+						<Button type="submit">
+							{initialData ? 'Edit supplier' : 'Add supplier'}
+						</Button>
+						{initialData && (
+							<Button
+								type="button"
+								variant="destructive"
+								onClick={onDeleteClick}
+							>
+								Delete
+							</Button>
+						)}
+					</div>
 				</form>
 			</Form>
+			<Separator />
+			<ProductList initialData={productsSupplied} />
 		</>
 	);
 };

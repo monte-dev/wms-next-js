@@ -1,9 +1,20 @@
+import prismadb from '@/lib/prismadb';
 import SupplierForm from './components/supplierForm';
 
-const SupplierPage = () => {
+const SupplierPage = async ({ params }: { params: { supplierId: string } }) => {
+	const supplier = await prismadb.supplier.findFirst({
+		where: {
+			id: params.supplierId,
+		},
+		include: { productsSupplied: true },
+	});
+	console.log(supplier?.productsSupplied);
 	return (
 		<div>
-			<SupplierForm></SupplierForm>
+			<SupplierForm
+				initialData={supplier}
+				productsSupplied={supplier?.productsSupplied}
+			></SupplierForm>
 		</div>
 	);
 };

@@ -25,7 +25,7 @@ const ProductList: React.FC<Products> = ({ data }) => {
 		setSelectedProduct(product);
 	};
 
-	const title = selectedProduct ? 'Edit Product' : 'Add product';
+	const buttonText = selectedProduct ? 'Edit Product' : 'Add product';
 	const route = selectedProduct
 		? `products/${selectedProduct.id}`
 		: 'products/new';
@@ -43,7 +43,7 @@ const ProductList: React.FC<Products> = ({ data }) => {
 					<span className="me-1">
 						{selectedProduct ? <PiPenBold /> : <PiPlusCircleBold />}
 					</span>
-					{title}
+					{buttonText}
 				</Button>
 			</div>
 			<Separator />
