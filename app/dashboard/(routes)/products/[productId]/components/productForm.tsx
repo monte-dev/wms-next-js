@@ -74,23 +74,29 @@ const ProductForm: React.FC<ProductFormProps> = ({
 			SKU: initialData?.SKU || '',
 			price: initialData?.price || 0,
 			supplierId: initialData?.supplierId || '',
-			quantity: initialData?.quantity || 0,
+			quantity: initialData
+				? productsBySKU.reduce(
+						(total, item) => total + item.quantity,
+						0
+				  )
+				: 0,
 		},
 	});
 
 	const { touchedFields } = formState;
-
-	let totalQuantity;
-	if (
-		touchedFields.quantity &&
-		productsBySKU[0].id === initialData?.id &&
-		productsBySKU.length > 1
-	) {
-		totalQuantity = productsBySKU.reduce(
-			(total, item) => total + item.quantity,
-			0
-		);
-	}
+	const getTotalQuantity = () => {
+		if (
+			touchedFields.quantity &&
+			productsBySKU[0].id === initialData?.id &&
+			productsBySKU.length > 1
+		) {
+			return productsBySKU.reduce(
+				(total, item) => total + item.quantity,
+				0
+			);
+		}
+		return 0;
+	};
 
 	const defaultValues = {
 		name: '',
@@ -98,7 +104,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 		SKU: '',
 		price: 0,
 		supplierId: '',
-		quantity: totalQuantity ? totalQuantity : 0,
+		quantity: getTotalQuantity(),
 	};
 
 	if (initialData) {
@@ -107,9 +113,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
 		defaultValues.SKU = initialData.SKU || '';
 		defaultValues.price = initialData.price || 0;
 		defaultValues.supplierId = initialData.supplierId || '';
-		defaultValues.quantity = totalQuantity
-			? totalQuantity
-			: initialData.quantity || 0;
+		defaultValues.quantity =
+			getTotalQuantity() || initialData.quantity || 0;
 	}
 
 	const form = useForm<z.infer<typeof formSchema>>({

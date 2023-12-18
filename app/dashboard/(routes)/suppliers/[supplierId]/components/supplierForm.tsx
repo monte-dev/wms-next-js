@@ -4,7 +4,7 @@ import * as z from 'zod';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Product, Supplier } from '@prisma/client';
+import { Supplier } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 
 import {
@@ -63,7 +63,8 @@ const SupplierForm: React.FC<SupplierFormProps> = ({
 			router.push('/dashboard/suppliers');
 			router.refresh();
 		} catch (error) {
-			console.log('Something went wrong.', error);
+			console.error('Error submitting form:', error);
+			throw error;
 		}
 	};
 
@@ -73,7 +74,8 @@ const SupplierForm: React.FC<SupplierFormProps> = ({
 			router.refresh();
 			router.push('/dashboard/suppliers');
 		} catch (error) {
-			console.log('Something went wrong.', error);
+			console.log('Error deleting supplier:', error);
+			throw error;
 		}
 	};
 
