@@ -24,6 +24,7 @@ export type ProductColumns = {
 		productId: string | null;
 	}[];
 };
+
 export const products: ColumnDef<ProductColumns>[] = [
 	{
 		accessorKey: 'SKU',

@@ -8,14 +8,20 @@ const SupplierPage = async ({ params }: { params: { supplierId: string } }) => {
 		},
 		include: { productsSupplied: true },
 	});
-	console.log(supplier?.productsSupplied);
+
+	// Handle the case where supplier is null or undefined
+	const productsSupplied = supplier?.productsSupplied! || [];
+
+	console.log(productsSupplied);
+
 	return (
 		<div>
 			<SupplierForm
 				initialData={supplier}
-				productsSupplied={supplier?.productsSupplied}
+				productsSupplied={productsSupplied}
 			></SupplierForm>
 		</div>
 	);
 };
+
 export default SupplierPage;
